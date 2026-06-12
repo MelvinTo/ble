@@ -28,6 +28,11 @@ func (d *Device) SetCentralRole() error {
 	return nil
 }
 
+// SetTxPoolExtra is not applicable on darwin.
+func (d *Device) SetTxPoolExtra(n int) error {
+	return nil
+}
+
 // SetDeviceID sets HCI device ID.
 func (d *Device) SetDeviceID(id int) error {
 	return errors.New("Not supported")

@@ -21,6 +21,7 @@ type DeviceOption interface {
 	SetDisconnectedHandler(f func(evt.DisconnectionComplete)) error
 	SetPeripheralRole() error
 	SetCentralRole() error
+	SetTxPoolExtra(int) error
 }
 
 // An Option is a configuration function, which configures the device.
@@ -107,6 +108,18 @@ func OptPeripheralRole() Option {
 func OptCentralRole() Option {
 	return func(opt DeviceOption) error {
 		opt.SetCentralRole()
+		return nil
+	}
+}
+
+// OptTxPoolExtra sets how many extra ACL tx buffers each connection's pool is
+// given on top of (bufCnt-1). The default is 10. Set it to 0 on controllers
+// with small LE ACL buffer counts (e.g. UART-attached / Nordic) so the host
+// respects HCI flow control and does not trigger Data Buffer Overflow
+// (HCI event 0x1A).
+func OptTxPoolExtra(n int) Option {
+	return func(opt DeviceOption) error {
+		opt.SetTxPoolExtra(n)
 		return nil
 	}
 }

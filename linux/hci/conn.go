@@ -73,7 +73,12 @@ type Conn struct {
 }
 
 func newConn(h *HCI, param evt.LEConnectionComplete) *Conn {
-	p := NewPool(1+4+h.bufSize, h.bufCnt-1+10) // same as NewPool in hci.go
+	// Per-connection tx pool. txPoolExtra defaults to 10 (historical behavior);
+	// callers set it to 0 via OptTxPoolExtra on controllers with small LE ACL
+	// buffer counts (e.g. UART-attached / Nordic), where oversizing the pool
+	// lets the host exceed the controller's buffers and triggers Data Buffer
+	// Overflow (HCI event 0x1A).
+	p := NewPool(1+4+h.bufSize, h.bufCnt-1+h.txPoolExtra) // same as NewPool in hci.go
 
 	c := &Conn{
 		hci:   h,
