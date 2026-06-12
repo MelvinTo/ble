@@ -40,6 +40,11 @@ func NewHCI(opts ...ble.Option) (*HCI, error) {
 	h := &HCI{
 		id: -1,
 
+		// Default keeps the historical per-connection tx pool sizing
+		// (bufCnt-1+10). Override with OptTxPoolExtra(0) on small-buffer
+		// controllers.
+		txPoolExtra: 10,
+
 		chCmdPkt:  make(chan *pkt),
 		chCmdBufs: make(chan []byte, 16),
 		sent:      make(map[int]*pkt),
@@ -85,6 +90,11 @@ type HCI struct {
 	// aclHandler
 	bufSize int
 	bufCnt  int
+
+	// txPoolExtra is the number of extra ACL tx buffers added to each
+	// connection's pool on top of (bufCnt-1). Defaults to 10; set to 0 via
+	// OptTxPoolExtra for controllers with small LE buffer counts.
+	txPoolExtra int
 
 	// Device information or status.
 	addr    net.HardwareAddr

@@ -71,3 +71,9 @@ func (h *HCI) SetPeripheralRole() error {
 func (h *HCI) SetCentralRole() error {
 	return errors.New("Not supported")
 }
+
+// SetTxPoolExtra sets the number of extra ACL tx buffers per connection pool.
+func (h *HCI) SetTxPoolExtra(n int) error {
+	h.txPoolExtra = n
+	return nil
+}
